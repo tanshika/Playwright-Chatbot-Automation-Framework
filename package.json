@@ -1,0 +1,34 @@
+{
+  "name": "playwright-chatbot-automation-framework",
+  "version": "1.0.0",
+  "description": "Playwright + Page Object Model framework for automating and evaluating a chatbot with pluggable quality validators (semantic correctness, sensitive-info leakage, consistency, latency).",
+  "type": "commonjs",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:semantic": "playwright test -g \"Semantic Correctness\"",
+    "test:relevance": "playwright test -g \"Relevance\"",
+    "test:completeness": "playwright test -g \"Completeness\"",
+    "test:hallucination": "playwright test -g \"Hallucination\"",
+    "test:consistency": "playwright test -g \"Consistency\"",
+    "test:safety": "playwright test -g \"Safety\"",
+    "test:latency": "playwright test -g \"Latency / Performance\"",
+    "test:extractor": "playwright test tests/extractor.spec.js",
+    "report": "playwright show-report reports/html",
+    "report:html": "node scripts/generate-html-report.js",
+    "install:browsers": "playwright install chromium"
+  },
+  "keywords": [
+    "playwright",
+    "chatbot",
+    "automation",
+    "page-object-model",
+    "llm-evaluation"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.48.0"
+  }
+}
