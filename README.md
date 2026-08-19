@@ -24,6 +24,13 @@ npm test                 # 12 live quality cases across 7 suites + 4 offline gua
 open reports/evaluation-report.html
 ```
 
+![Chatbot evaluation report: a suite-grouped scorecard. A summary bar shows 12 cases, 12 passed, 0 failed, 0.707 average. Below it the Semantic Correctness suite lists three cases, each a card with a PASS badge, the prompt, and a table of validator scores with coloured bars.](docs/report-screenshot.png)
+
+Each case carries a PASS/FAIL badge from **its own assertions**, then every
+validator's score. Dimensions the suite does not assert on are marked *not
+counted*. That is why `contradictory-answer` passes at 0.250 — it asserts a
+*maximum*, so a low score is the case succeeding, not failing.
+
 ### Two things to know before you run it
 
 - **It runs headed.** LiveChat's widget refuses to mount in headless Chromium
