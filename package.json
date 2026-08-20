@@ -17,6 +17,7 @@
     "test:extractor": "playwright test tests/extractor.spec.js",
     "report": "playwright show-report reports/html",
     "report:html": "node scripts/generate-html-report.js",
+    "report:screenshot": "node scripts/screenshot-report.js",
     "install:browsers": "playwright install chromium"
   },
   "keywords": [

@@ -172,6 +172,7 @@ npm test              # run every suite, print scores, write reports/
 npm run test:extractor # fast offline DOM-reading guards (no live bot, ~1s)
 npm run test:headed   # same (already headed by default) with visible browser
 npm run report:html   # regenerate the human-readable HTML report from the JSON
+npm run report:screenshot  # refresh docs/report-screenshot.png used in this README
 npm run report        # open the Playwright HTML report (traces/screenshots)
 ```
 
