@@ -76,6 +76,9 @@ function termFreq(tokens) {
 /**
  * Fraction of `keywords` that appear (as whole tokens) in `text`.
  * Returns a value in [0, 1]. Empty keyword list scores 1 (nothing required).
+ *
+ * An entry may be a nested array of alternatives, satisfied by any one member:
+ * `[['help', 'assist'], 'pricing']` is two requirements, not three.
  */
 function keywordCoverage(text, keywords = []) {
   if (!keywords.length) return 1;
@@ -91,11 +94,8 @@ function keywordCoverage(text, keywords = []) {
 
   let hits = 0;
   for (const entry of keywords) {
-    // A nested array is an alternatives group, satisfied by ANY one member.
-    // Synonyms are alternatives, not separate facts: scored as separate facts,
-    // "I'd be happy to help with what you need assistance with" counted 1 of 3
-    // against ['help','assist','support'] — marking a model reply at 0.33 for
-    // the words it happened not to use.
+    // Synonyms belong in one group: listed flat they count as separate facts, so
+    // a reply is penalised for the wording it happened not to use.
     hits += (Array.isArray(entry) ? entry.some(matches) : matches(entry)) ? 1 : 0;
   }
   return hits / keywords.length;

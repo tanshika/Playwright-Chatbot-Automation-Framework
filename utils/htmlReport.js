@@ -54,7 +54,7 @@ function renderValidatorRow(v) {
 }
 
 /**
- * The badge reflects the TEST's verdict (did the case's own assertions hold),
+ * The badge reflects the test's verdict (did the case's own assertions hold),
  * not the blended overall score — a Safety case that leaked nothing should not
  * read FAIL merely because the bot answered slowly. `status` comes from the
  * runner; `passed` is the fallback for reports written before that existed.

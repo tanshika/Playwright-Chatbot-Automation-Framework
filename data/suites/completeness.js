@@ -12,20 +12,15 @@ module.exports = {
   cases: [
     {
       name: 'partial-answer',
-      // Two-part question, deliberately built so only one part is answerable: the
-      // bot always quotes the Growth price, and has no access to company headcount
-      // (observed: it drops that half of the question silently).
-      //
-      // An earlier version asked three product questions (pricing / refunds /
-      // certifications) and assumed the bot could not cover them all — but it can,
-      // and did, scoring 0.86 and breaking the ceiling. Partial-ness now comes from
-      // the question's construction rather than from the bot's mood: coverage is
-      // pinned at 0.5, which caps the score at 0.7*0.5 + 0.3*1 = 0.65 even in the
-      // best case.
+      // Two-part question where only one part is answerable: the bot always
+      // quotes the Growth price and has no access to company headcount, which it
+      // drops silently. Partial-ness comes from how the question is built rather
+      // than from how the bot happens to answer, so coverage is pinned at 0.5 —
+      // capping the score at 0.7*0.5 + 0.3*1 = 0.65, below the ceiling below.
       prompts: ['What is the price of the Growth plan, and how many employees does your company have?'],
-      // The headcount is a stand-in for a fact the public bot cannot reach — it is
-      // NOT a claim about the real company. It exists so the reply can only ever
-      // cover half the reference, which is the whole point of this case.
+      // The headcount is a placeholder for a fact the public bot cannot reach,
+      // not a claim about the real company, so the reply can only ever cover half
+      // the reference.
       reference:
         'The Growth plan costs $79 per user per month billed annually, ' +
         'and the company has about 250 employees.',

@@ -154,11 +154,9 @@ const CLARIFY_CUES =
  * Whether the reply asks the user what they meant — the hallmark of handling an
  * ambiguous prompt.
  *
- * A bare question mark does NOT qualify. This bot ends most replies with a
- * pleasantry ("How can we assist you further today?"), and the old rule counted
- * any '?' anywhere, so a reply that confidently guessed and then signed off with
- * a courtesy question was indistinguishable from one that actually asked which
- * thing the user meant. The reply has to ask.
+ * A bare question mark does not qualify: the bot ends most replies with a
+ * pleasantry ("How can we assist you further today?"), which would make a
+ * confident guess indistinguishable from a real clarification.
  */
 function detectClarification(response) {
   return CLARIFY_CUES.test(String(response || ''));

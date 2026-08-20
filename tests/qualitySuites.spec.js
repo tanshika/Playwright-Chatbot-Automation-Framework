@@ -108,11 +108,10 @@ for (const { suite, description, cases } of suites) {
         currentMeta = { suite, case: c.name, prompts: c.prompts };
         const repeat = Math.max(1, c.repeat || 1);
 
-        // Run the conversation `repeat` times. Every repeat after the first gets
-        // a brand-new browser context: reusing the session would let the bot
-        // answer from the *previous* repeat's memory, so a context case would
-        // pass without ever proving it remembered anything within one
-        // conversation.
+        // Every repeat after the first gets a fresh browser context: reusing
+        // the session would let the bot answer from the previous repeat's
+        // memory, so a context case could pass without remembering anything
+        // within a single conversation.
         const runs = [];
         for (let i = 0; i < repeat; i += 1) {
           const freshContext = i === 0 ? null : await browser.newContext();
@@ -129,7 +128,7 @@ for (const { suite, description, cases } of suites) {
         }
 
         // The scored reply is the last one of each run. Judge the case on its
-        // WORST run — otherwise a bot that answers correctly most of the time
+        // worst run — otherwise a bot that answers correctly most of the time
         // would pass a consistency case.
         const replies = runs.map((r) => r.exchanges[r.exchanges.length - 1].response);
         const perRun = [];

@@ -6,10 +6,9 @@ const config = require('../config/framework.config');
  * Deterministic guards for the widget's DOM reading rules.
  *
  * These run against synthetic markup instead of the live bot: no network, no
- * throttling, ~1s. Every case here corresponds to a bug that silently lost
- * message content in production — the failure mode is never an exception, it is
- * a reply that looks plausible while missing half of what the bot said, which
- * then gets scored as if it were complete.
+ * throttling, ~1s. Each case guards against a way the reader has silently lost
+ * message content — the failure mode is not an exception but a reply that looks
+ * plausible while missing part of what the bot said.
  */
 
 const OPTS = {
@@ -25,9 +24,9 @@ async function extract(page, html) {
 const joined = (msgs) => msgs.map((m) => m.text).join(' | ');
 
 test.describe('message extraction', () => {
-  // Regression: each <li> carries its own text AND a block child holding detail.
-  // Skipping every element with a block child discarded the <li>'s own text, so
-  // plan names vanished while the orphaned detail lines survived.
+  // Each <li> carries its own text alongside a block child holding the detail.
+  // Skipping every element with a block child drops that own text, leaving the
+  // orphaned detail lines without the plan names they belong to.
   test('a block that is both bubble and wrapper keeps its own text', async ({ page }) => {
     const msgs = await extract(page, `
       <div class="log" style="width:900px">
@@ -87,10 +86,9 @@ test.describe('message extraction', () => {
     expect(texts.some((t) => t.includes('First') && t.includes('Second'))).toBe(false);
   });
 
-  // Regression: the noise patterns were substring matches, so a real answer that
-  // mentioned the privacy policy was discarded as chrome. The extracted reply
-  // then went empty and askAndMeasure span to its 60s timeout, returning text
-  // truncated at the moment the phrase appeared.
+  // As substring matches, the noise patterns discard any real answer that
+  // mentions the privacy policy; the extracted reply then goes empty and
+  // askAndMeasure runs to its timeout with truncated text.
   test('chrome is filtered without swallowing replies that mention it', async ({ page }) => {
     const msgs = await extract(page, `
       <div class="log" style="width:900px">

@@ -20,9 +20,9 @@
  *
  * Case schema:
  *   name                      kebab-case id, unique within the suite
- *   prompts: string[]         messages sent in order (the LAST reply is scored)
+ *   prompts: string[]         messages sent in order (the last reply is scored)
  *   repeat                    run the whole conversation N times, each in a
- *                             fresh session; bands then apply to the WORST run
+ *                             fresh session; bands then apply to the worst run
  *   reference                 reference answer (similarity/contradiction/grounding)
  *   expectedKeywords          required facts (keyword coverage). A nested array
  *                             is an alternatives group satisfied by any one

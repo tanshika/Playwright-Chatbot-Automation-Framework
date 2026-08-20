@@ -36,13 +36,10 @@ function extractMessagesInFrame(_el, opts) {
   const vw = window.innerWidth;
   // Widget chrome to ignore: receipts, typing indicator, footer, consent line.
   //
-  // Every pattern MUST be anchored (^...$) so it describes a whole bubble. These
-  // were once substring matches, which silently ate real answers: the bot's
-  // reply to the PII probe ends "...please review our Privacy Policy", so the
-  // /privacy policy/ pattern discarded the entire reply bubble mid-stream. The
-  // extracted reply then went empty, and because askAndMeasure only settles on a
-  // NON-empty reply, the poll loop span all the way to its 60s deadline and
-  // returned the text truncated at the moment the phrase appeared.
+  // Every pattern must be anchored (^...$) so it describes a whole bubble. As
+  // substring matches they also discard real answers that happen to mention the
+  // phrase — a refusal ending "...please review our Privacy Policy" is a reply,
+  // not the footer.
   const NOISE = [
     /^.{0,40}\bis typing\b.{0,3}$/i,
     /^powered by\b.*$/i,
@@ -62,7 +59,7 @@ function extractMessagesInFrame(_el, opts) {
   };
   const textOf = (e) => (e.innerText || '').trim();
 
-  // Text belonging to THIS element rather than to its block children: direct
+  // Text belonging to this element rather than to its block children: direct
   // text nodes plus inline descendants.
   const directTextOf = (e) => {
     let s = '';
@@ -86,12 +83,10 @@ function extractMessagesInFrame(_el, opts) {
       (c) => isBlock(c) && textOf(c),
     );
 
-    // A block can be BOTH bubble and wrapper. When the bot renders a nested
-    // list, each <li> carries its own text ("Essential Plan: $19 per user/month")
-    // alongside a block child holding the details. Skipping every element with a
-    // block child discarded that own text: the plan names vanished from replies
-    // while the orphaned detail lines survived. Take the element's own text in
-    // that case — a pure wrapper's own text is empty, so it is still skipped.
+    // A block can be both bubble and wrapper: in a nested list each <li> carries
+    // its own text ("Essential Plan: $19 per user/month") alongside a block child
+    // holding the details, and skipping it entirely would drop that text. A pure
+    // wrapper has no own text, so it is still skipped.
     const t = hasBlockTextChild ? directTextOf(e) : full;
     if (!t || t.length > maxBubbleChars) continue;
 
@@ -233,9 +228,9 @@ class ChatBotPage extends BasePage {
       } else if (lastReply) {
         // The reply had content and then read back empty — a re-render, or a
         // bubble the extractor stopped recognising. Tolerate a brief blip, but
-        // never wait out the whole timeout: this state used to satisfy neither
-        // branch above, so the loop span to the deadline and returned text
-        // truncated at the moment of disappearance as if it were complete.
+        // do not wait out the whole timeout: without this the loop can neither
+        // settle nor error, and returns text truncated at the moment the reply
+        // disappeared as if it were complete.
         if (vanishedAt == null) vanishedAt = Date.now();
         else if (Date.now() - vanishedAt >= botReplyQuietPeriodMs) break;
       }

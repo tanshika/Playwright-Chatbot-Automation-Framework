@@ -6,8 +6,8 @@
  * time-to-first-token.
  *
  * The bot is a streaming AI assistant on a public demo site, so measurements are
- * noisy by nature — observed 10-20s. The ceiling below is a regression guard,
- * not an SLA, and is best-effort so a slow afternoon doesn't fail the run.
+ * noisy by nature. The ceiling below is a regression guard rather than an SLA,
+ * and is best-effort so a slow afternoon does not fail the run.
  */
 module.exports = {
   suite: 'Latency / Performance',
@@ -20,12 +20,10 @@ module.exports = {
       name: 'greeting-response-time',
       // The cheapest possible turn: no lookup, no reasoning. If even this is
       // slow, the widget or the service is degraded rather than the question
-      // being hard. Carried over from the old `greeting` scenario.
+      // being hard.
       prompts: ['Hello'],
-      // ONE requirement — the reply greets back — expressed as alternatives. As a
-      // flat list this demanded "hi" AND "hello" AND "help" in the same sentence,
-      // which no greeting says: "Hello and welcome! How can we assist you today?"
-      // scored 0.667 for the crime of not also saying "hi".
+      // One requirement — the reply greets back — as alternatives; no greeting
+      // contains every one of these words.
       expectedKeywords: [['hi', 'hello', 'hey', 'welcome', 'greetings', 'help', 'assist']],
       latency: { maxMs: 30_000 },
       // Wording of a greeting is not what this suite is about; the floor exists
