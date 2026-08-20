@@ -100,6 +100,41 @@ Each case declares only the assertions its suite needs (`expect` band, `signals`
 logged warning, which most live-bot cases use. The full schema is documented at
 the top of `data/suites/index.js`.
 
+## What kind of testing is this?
+
+**Evals** — specifically an *LLM application eval harness*. Because thresholds
+gate pass/fail inside a test runner rather than producing a leaderboard number,
+it is also **behavioral testing**, and run on a schedule against a live endpoint
+it doubles as **synthetic monitoring**.
+
+| Axis | This framework |
+|------|----------------|
+| Model eval vs **application** eval | Application — a deployed product, not a model on a benchmark |
+| Offline vs online | Offline (fixed case set), against a **live** system end to end |
+| Reference-based vs reference-free | Mostly reference-based: cases supply a `reference` answer |
+| Heuristic vs model-graded vs human | **Heuristic** — no LLM-as-judge, no human raters |
+| Scoring vs assertion | Assertion — thresholds gate the build, i.e. *eval-as-test* |
+
+The suites map onto the test types from **CheckList** (Ribeiro et al., ACL 2020,
+*Beyond Accuracy: Behavioral Testing of NLP Models*):
+
+- **MFT** (minimum functionality) — `correct-answer`, `partial-answer`, `hallucinated-information`
+- **INV** (invariance) — same meaning must yield the same answer:
+  `correct-meaning-different-wording`, `pricing-consistency`, `consistent-conversation-context`
+
+The invariance cases are also **metamorphic tests**: the one correct output
+cannot be stated, but a *relation* between two outputs can be. That is what makes
+them meaningful against a bot whose wording changes run to run.
+
+Individual validators borrow standard vocabulary too — `checkGrounding` measures
+**groundedness/faithfulness**, the hallucination metric used by RAG evaluation
+frameworks, and the PII case is **guardrail testing** (its adversarial extension
+would be red teaming).
+
+What it is **not**: model benchmarking (MMLU, HELM), LLM-as-judge, production
+tracing/observability, or unit testing — the system under test is
+non-deterministic, which is why `soft` assertions exist at all.
+
 ## Architecture
 
 ```
